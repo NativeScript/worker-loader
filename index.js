@@ -66,7 +66,7 @@ module.exports.pitch = function pitch(request) {
         });
     }
 
-    const workerCompiler = compilation.createChildCompiler("worker", outputOptions);
+    const workerCompiler = this._compilation.createChildCompiler("worker", outputOptions);
     workerCompiler.apply(new WebWorkerTemplatePlugin(outputOptions));
     if (this.target !== "webworker" && this.target !== "web") {
         workerCompiler.apply(new NodeTargetPlugin());
