@@ -1,11 +1,13 @@
 "use strict";
 
 const path = require("path");
+
 const loaderUtils = require("loader-utils");
 const validateOptions = require("schema-utils");
 const WebWorkerTemplatePlugin = require("webpack/lib/webworker/WebWorkerTemplatePlugin");
 const NodeTargetPlugin = require("webpack/lib/node/NodeTargetPlugin");
 const SingleEntryPlugin = require("webpack/lib/SingleEntryPlugin");
+
 const schema = require("./options.json");
 
 const validateSchema = (schema, options, pluginName) => {
@@ -45,6 +47,7 @@ module.exports.pitch = function pitch(request) {
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
     validateSchema(schema, options, "Worker Loader");
+    this._compilation.workerChunks = [];
 
     const filename = loaderUtils.interpolateName(this, options.name || "[hash].worker.js", {
         context: options.context || this.options.context,
@@ -63,7 +66,7 @@ module.exports.pitch = function pitch(request) {
         });
     }
 
-    const workerCompiler = this._compilation.createChildCompiler("worker", outputOptions);
+    const workerCompiler = compilation.createChildCompiler("worker", outputOptions);
     workerCompiler.apply(new WebWorkerTemplatePlugin(outputOptions));
     if (this.target !== "webworker" && this.target !== "web") {
         workerCompiler.apply(new NodeTargetPlugin());
@@ -84,13 +87,14 @@ module.exports.pitch = function pitch(request) {
         }
     });
 
-    workerCompiler.runAsChild((err, entries, compilation) => {
+    workerCompiler.runAsChild((err, entries) => {
         if (err) {
             return callback(err);
         }
 
         if (entries[0]) {
             const workerFile = entries[0].files[0];
+            this._compilation.workerChunks.push(workerFile);
             const workerFactory = getWorker(workerFile, options);
 
             return callback(null, `module.exports = function() {\n\treturn ${workerFactory};\n};`);
