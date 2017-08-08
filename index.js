@@ -9,7 +9,9 @@ const SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 const schema = require('./options.json');
 
 const getWorker = (file, content, options) => {
-  const workerPublicPath = `__webpack_public_path__ + ${JSON.stringify(file)}`;
+  const root = JSON.stringify('./');
+  const filePath = JSON.stringify(file);
+  const workerPublicPath = `${root} + __webpack_public_path__ + ${filePath}`;
   if (options.inline) {
     const createInlineWorkerPath = JSON.stringify(`!!${path.join(__dirname, 'createInlineWorker.js')}`);
     const fallbackWorkerPath = options.fallback === false ? 'null' : workerPublicPath;
