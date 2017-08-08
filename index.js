@@ -8,7 +8,7 @@ const NodeTargetPlugin = require("webpack/lib/node/NodeTargetPlugin");
 const SingleEntryPlugin = require("webpack/lib/SingleEntryPlugin");
 const schema = require("./options.json");
 
-const getWorker = (file, _content, options) => {
+const validateSchema = (schema, options, pluginName) => {
     if (options.inline) {
         throw new Error("The NativeScript worker loader doesn't support inline workers!")
     }
@@ -18,6 +18,10 @@ const getWorker = (file, _content, options) => {
             "cannot be used without a fallback webworker script!");
     }
 
+    validateOptions(schema, options, pluginName);
+};
+
+const getWorker = (file, options) => {
     const workerPublicPath = getPublicPath(file);
 
     return `new Worker(${workerPublicPath})`;
@@ -28,7 +32,7 @@ const getPublicPath = file => {
     const filePath = JSON.stringify(file);
 
     return `${root} + __webpack_public_path__ + ${filePath}`;
-}
+};
 
 module.exports = function workerLoader() {};
 
@@ -40,8 +44,7 @@ module.exports.pitch = function pitch(request) {
     this.cacheable(false);
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
-
-    validateOptions(schema, options, "Worker Loader");
+    validateSchema(schema, options, "Worker Loader");
 
     const filename = loaderUtils.interpolateName(this, options.name || "[hash].worker.js", {
         context: options.context || this.options.context,
@@ -88,10 +91,7 @@ module.exports.pitch = function pitch(request) {
 
         if (entries[0]) {
             const workerFile = entries[0].files[0];
-            const workerFactory = getWorker(workerFile, compilation.assets[workerFile].source(), options);
-            if (options.fallback === false) {
-                delete this._compilation.assets[workerFile];
-            }
+            const workerFactory = getWorker(workerFile, options);
 
             return callback(null, `module.exports = function() {\n\treturn ${workerFactory};\n};`);
         }
@@ -99,3 +99,4 @@ module.exports.pitch = function pitch(request) {
         return callback(null, null);
     });
 };
+
