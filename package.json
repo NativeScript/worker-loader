@@ -10,7 +10,14 @@
   "eslintConfig": {
     "extends": "webpack",
     "rules": {
-      "linebreak-style": 0,
+      "quotes": [
+        "error",
+        "double"
+      ],
+      "indent": [
+        "error",
+        4
+      ],
       "comma-dangle": [
         "error",
         {
@@ -21,23 +28,27 @@
           "functions": "never"
         }
       ],
-      "no-underscore-dangle": 0,
+      "arrow-parens": 0,
+      "func-names": 0,
+      "import/no-extraneous-dependencies": 0,
+      "linebreak-style": 0,
       "no-param-reassign": 0,
+      "no-underscore-dangle": 0,
       "prefer-destructuring": 0,
       "strict": 0
     }
   },
   "dependencies": {
     "loader-utils": "^1.0.2",
-    "schema-utils": "^0.3.0"
+    "schema-utils": "^0.3.0",
+    "webpack": "^3.5.1"
   },
   "devDependencies": {
     "del": "^2.2.2",
     "eslint": "^3.16.0",
     "eslint-config-webpack": "^1.0.0",
     "eslint-plugin-import": "^2.2.0",
-    "mocha": "^3.2.0",
-    "webpack": "^3.5.1"
+    "mocha": "^3.2.0"
   },
   "repository": {
     "type": "git",

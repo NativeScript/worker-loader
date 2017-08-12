@@ -1,11 +1,11 @@
 const { resolve } = require("path");
 const { RawSource } = require("webpack-sources");
 
-exports.NativeScriptWorkerPlugin = (function() {
+exports.NativeScriptWorkerPlugin = (function () {
     function NativeScriptWorkerPlugin() {
     }
 
-    NativeScriptWorkerPlugin.prototype.apply = function(compiler) {
+    NativeScriptWorkerPlugin.prototype.apply = function (compiler) {
         compiler.plugin("emit", (compilation, cb) => {
             const output = compiler.outputPath;
             const workersFullPath = compilation.workerChunks
@@ -21,5 +21,5 @@ exports.NativeScriptWorkerPlugin = (function() {
     };
 
     return NativeScriptWorkerPlugin;
-})();
+}());
 

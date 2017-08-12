@@ -1,32 +1,23 @@
 "use strict";
 
-const path = require("path");
-
 const loaderUtils = require("loader-utils");
 const validateOptions = require("schema-utils");
 const WebWorkerTemplatePlugin = require("webpack/lib/webworker/WebWorkerTemplatePlugin");
 const NodeTargetPlugin = require("webpack/lib/node/NodeTargetPlugin");
 const SingleEntryPlugin = require("webpack/lib/SingleEntryPlugin");
-
-const schema = require("./options.json");
+const optionsSchema = require("./options.json");
 
 const validateSchema = (schema, options, pluginName) => {
     if (options.inline) {
-        throw new Error("The NativeScript worker loader doesn't support inline workers!")
+        throw new Error("The NativeScript worker loader doesn't support inline workers!");
     }
 
     if (options.fallback === false) {
-        throw new Error("The NativeScript worker loader " + 
+        throw new Error("The NativeScript worker loader " +
             "cannot be used without a fallback webworker script!");
     }
 
     validateOptions(schema, options, pluginName);
-};
-
-const getWorker = (file, options) => {
-    const workerPublicPath = getPublicPath(file);
-
-    return `new Worker(${workerPublicPath})`;
 };
 
 const getPublicPath = file => {
@@ -34,6 +25,11 @@ const getPublicPath = file => {
     const filePath = JSON.stringify(file);
 
     return `${root} + __webpack_public_path__ + ${filePath}`;
+};
+
+const getWorker = file => {
+    const workerPublicPath = getPublicPath(file);
+    return `new Worker(${workerPublicPath})`;
 };
 
 module.exports = function workerLoader() {};
@@ -46,7 +42,7 @@ module.exports.pitch = function pitch(request) {
     this.cacheable(false);
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
-    validateSchema(schema, options, "Worker Loader");
+    validateSchema(optionsSchema, options, "Worker Loader");
     this._compilation.workerChunks = [];
 
     const filename = loaderUtils.interpolateName(this, options.name || "[hash].worker.js", {
@@ -95,7 +91,7 @@ module.exports.pitch = function pitch(request) {
         if (entries[0]) {
             const workerFile = entries[0].files[0];
             this._compilation.workerChunks.push(workerFile);
-            const workerFactory = getWorker(workerFile, options);
+            const workerFactory = getWorker(workerFile);
 
             return callback(null, `module.exports = function() {\n\treturn ${workerFactory};\n};`);
         }
