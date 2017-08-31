@@ -7,6 +7,10 @@ exports.NativeScriptWorkerPlugin = (function () {
 
     NativeScriptWorkerPlugin.prototype.apply = function (compiler) {
         compiler.plugin("emit", (compilation, cb) => {
+            if (!compilation.workerChunks) {
+                return cb();
+            }
+
             const output = compiler.outputPath;
             const workersFullPath = compilation.workerChunks
                 .map(chunk => resolve(output, chunk));
