@@ -1,0 +1,9 @@
+platforms
+node_modules
+hooks
+report
+package-lock.json
+
+app/**/*.js
+!app/workers/javascript.worker.js
+
