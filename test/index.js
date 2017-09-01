@@ -9,8 +9,10 @@ const { NativeScriptWorkerPlugin } = require("../NativeScriptWorkerPlugin");
 
 process.chdir(__dirname);
 
+const contains = (first, second) => first.indexOf(second) > -1;
+
 if (!Object.prototype.hasOwnProperty.call(assert, "contains")) {
-    assert.contains = (first, second) => first.indexOf(second) > -1;
+    assert.contains = (first, second) => assert.ok(contains(first, second));
 }
 
 const readFile = file => fs.readFileSync(file, "utf-8");
@@ -53,46 +55,49 @@ const getChunksMeta = stats => stats.toJson().children
 const getChunks = (stats, testName) => getChunksMeta(stats).map(item => `expected/${testName}/${item}`);
 
 describe("worker-loader", () => {
-    const inlineOptionErrorMessage = "The NativeScript wworker loader doesn't support inline workers!";
+    const inlineOptionErrorMessage = "The NativeScript worker loader doesn't support inline workers!";
     const noFallbackOptionErrorMessage = "The NativeScript worker loader cannot be used without a fallback webworker script!";
 
-    const assertStatsFileIsCorrect = (stats, testName) => {
+    const statsFileIsCorrect = async (stats, testName) => {
         const assets = getAssetsMeta(stats);
         const workerStatsAssetMeta = assets.find(f => f.name === "__worker-chunks.json");
-        assert.ok(workerStatsAssetMeta);
+        await assert.ok(workerStatsAssetMeta);
 
         const chunks = getChunksMeta(stats);
         const workerStatsFilePath = `expected/${testName}/${workerStatsAssetMeta.name}`;
-        const workerStatsFile = readFile(workerStatsFilePath);
+        const workerStatsFile = await readFile(workerStatsFilePath);
 
-        chunks.forEach(chunk => assert.ok(workerStatsFile.indexOf(chunk) > -1));
+        return chunks.every(chunk => contains(workerStatsFile, chunk));
     };
 
-    it("should create chunk with worker", () => {
+    it("should create chunk with worker", async () => {
         const testName = "worker";
-        makeBundle(testName).then((stats) => {
-            const files = getChunks(stats, testName);
-            assert.equal(files.length, 1);
-            assert.notEqual(readFile(files[0]).indexOf("// worker test mark"), -1);
+        const stats = await makeBundle(testName);
 
-            assertStatsFileIsCorrect(stats, testName);
-        });
+        const files = getChunks(stats, testName);
+        assert.equal(files.length, 1);
+
+        const content = await readFile(files[0]);
+        await assert.contains(content, "// worker test mark");
+
+        assert.ok(await statsFileIsCorrect(stats, testName));
     });
 
-    it("should create chunk with specified name in query", () => {
+    it("should create chunk with specified name in query", async () => {
         const testName = "name-query";
-        makeBundle(testName).then((stats) => {
-            const files = getChunks(stats, testName);
-            assert.equal(files[0], `expected/${testName}/namedWorker.js`);
-            assert.notEqual(readFile(files[0]).indexOf("// named worker test mark"), -1);
+        const stats = await makeBundle(testName);
+        const file = getChunks(stats, testName)[0];
+        assert.equal(file, `expected/${testName}/namedWorker.js`);
 
-            assertStatsFileIsCorrect(stats, testName);
-        });
+        const content = await readFile(file);
+        await assert.contains(content, "// named worker test mark");
+
+        assert.ok(await statsFileIsCorrect(stats, testName));
     });
 
-    it("should create named chunks with workers via options", () => {
+    it("should create named chunks with workers via options", async () => {
         const testName = "name-options";
-        makeBundle(testName, {
+        const stats = await makeBundle(testName, {
             module: {
                 rules: [
                     {
@@ -104,16 +109,22 @@ describe("worker-loader", () => {
                     },
                 ],
             },
-        }).then((stats) => {
-            const files = getChunks(stats, testName).sort();
-            assert.equal(files.length, 2);
-            assert.equal(files[0], `expected/${testName}/w1.js`);
-            assert.equal(files[1], `expected/${testName}/w2.js`);
-            assert.notEqual(readFile(files[0]).indexOf("// w1 via worker options"), -1);
-            assert.notEqual(readFile(files[1]).indexOf("// w2 via worker options"), -1);
-
-            assertStatsFileIsCorrect(stats, testName);
         });
+
+        const files = getChunks(stats, testName).sort();
+        assert.equal(files.length, 2);
+
+        const [first, second] = files;
+
+        assert.equal(first, `expected/${testName}/w1.js`);
+        assert.equal(second, `expected/${testName}/w2.js`);
+
+        const [firstContent, secondContent] = files.map(readFile);
+
+        await assert.contains(firstContent, "// w1 via worker options");
+        await assert.contains(secondContent, "// w2 via worker options");
+
+        assert.ok(await statsFileIsCorrect(stats, testName));
     });
 
     it("should throw with inline option in query", () =>
