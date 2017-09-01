@@ -84,6 +84,11 @@ self.postMessage({foo: 'foo'})
 self.addEventListener('message', (event) => { console.log(event); });
 ```
 
+### Demo apps
+For usage with NativeScript Angular, check out the `demo-angular` app in this repo.
+
+For usage with NativeScript apps written in plain JavaScript, check out this repo: https://github.com/NativeScript/demo-workers.
+
 ### Integrating with TypeScript
 
 To integrate with TypeScript, you will need to define a custom module for the exports of your worker. You will also need to cast the new worker as the `Worker` type:
@@ -102,3 +107,48 @@ import * as MyWorker from "worker-loader!../../worker";
 const worker: Worker = new MyWorker();
 ```
 
+### Web workers with/without webpack
+
+Please note that the way to spawn a Worker with webpack differs from the way described in the WWW Web Workers' specification (also followed by NativeScript).
+
+Below are a few examples on how to use workers for builds with and without webpack.
+#### JS worker scripts
+If you wrote your worker scripts in plain JavaScript, you can require them.
+
+Usage with webpack:
+``` ts
+const WorkerScript = require("worker-loader!./worker-script.js");
+const worker = new WorkerScript();
+```
+
+Usage without webpack:
+
+``` ts
+// without webpack
+const worker = new Worker("./worker-script.js");
+```
+
+Or you can use the `TNS_WEBPACK` global variable to find out if your app is built with webpack or not:
+``` ts
+let worker: Worker;
+if (global.["TNS_WEBPACK"]) {
+    const WorkerScript = require("worker-loader!./worker-script.js");
+    worker = new WorkerScript();
+} else {
+    worker = new Worker("./worker-script.js");
+}
+```
+#### TS worker scripts
+However, if you wrote your worker scripts with TypeScript, you cannot use the same code for both webpack builds and non-webpack builds.
+
+Usage with webpack:
+``` ts
+import * as WorkerScript from "worker-loader!./worker-script";
+const worker = new WorkerScript();
+```
+
+Usage without webpack:
+```ts
+const worker = new Worker("./worker-script");
+
+```
