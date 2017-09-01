@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const del = require("del");
 const webpack = require("webpack");
+const { NativeScriptWorkerPlugin } = require("../NativeScriptWorkerPlugin");
 
 process.chdir(__dirname);
 
@@ -21,6 +22,9 @@ const makeBundle = (name, options) => del(`expected/${name}`).then(() => {
             path: path.join(__dirname, `expected/${name}`),
             filename: "bundle.js",
         },
+        plugins: [
+            new NativeScriptWorkerPlugin(),
+        ],
     }, options);
     const bundle = webpack(config);
 
@@ -39,36 +43,56 @@ const makeBundle = (name, options) => del(`expected/${name}`).then(() => {
     });
 });
 
-const inlineOptionErrorMessage = "The NativeScript wworker loader doesn't support inline workers!";
-const noFallbackOptionErrorMessage = "The NativeScript worker loader cannot be used without a fallback webworker script!";
+const getAssetsMeta = stats => stats.toJson().assets;
+
+const getChunksMeta = stats => stats.toJson().children
+    .map(item => item.chunks)
+    .reduce((acc, item) => acc.concat(item), [])
+    .map(item => item.files);
+
+const getChunks = (stats, testName) => getChunksMeta(stats).map(item => `expected/${testName}/${item}`);
 
 describe("worker-loader", () => {
-    it("should create chunk with worker", () =>
-        makeBundle("worker").then((stats) => {
-            const files = stats.toJson().children
-                .map(item => item.chunks)
-                .reduce((acc, item) => acc.concat(item), [])
-                .map(item => item.files)
-                .map(item => `expected/worker/${item}`);
+    const inlineOptionErrorMessage = "The NativeScript wworker loader doesn't support inline workers!";
+    const noFallbackOptionErrorMessage = "The NativeScript worker loader cannot be used without a fallback webworker script!";
+
+    const assertStatsFileIsCorrect = (stats, testName) => {
+        const assets = getAssetsMeta(stats);
+        const workerStatsAssetMeta = assets.find(f => f.name === "__worker-chunks.json");
+        assert.ok(workerStatsAssetMeta);
+
+        const chunks = getChunksMeta(stats);
+        const workerStatsFilePath = `expected/${testName}/${workerStatsAssetMeta.name}`;
+        const workerStatsFile = readFile(workerStatsFilePath);
+
+        chunks.forEach(chunk => assert.ok(workerStatsFile.indexOf(chunk) > -1));
+    };
+
+    it("should create chunk with worker", () => {
+        const testName = "worker";
+        makeBundle(testName).then((stats) => {
+            const files = getChunks(stats, testName);
             assert.equal(files.length, 1);
             assert.notEqual(readFile(files[0]).indexOf("// worker test mark"), -1);
-        })
-    );
 
-    it("should create chunk with specified name in query", () =>
-        makeBundle("name-query").then((stats) => {
-            const files = stats.toJson().children
-                .map(item => item.chunks)
-                .reduce((acc, item) => acc.concat(item), [])
-                .map(item => item.files)
-                .map(item => `expected/name-query/${item}`);
-            assert.equal(files[0], "expected/name-query/namedWorker.js");
+            assertStatsFileIsCorrect(stats, testName);
+        });
+    });
+
+    it("should create chunk with specified name in query", () => {
+        const testName = "name-query";
+        makeBundle(testName).then((stats) => {
+            const files = getChunks(stats, testName);
+            assert.equal(files[0], `expected/${testName}/namedWorker.js`);
             assert.notEqual(readFile(files[0]).indexOf("// named worker test mark"), -1);
-        })
-    );
 
-    it("should create named chunks with workers via options", () =>
-        makeBundle("name-options", {
+            assertStatsFileIsCorrect(stats, testName);
+        });
+    });
+
+    it("should create named chunks with workers via options", () => {
+        const testName = "name-options";
+        makeBundle(testName, {
             module: {
                 rules: [
                     {
@@ -81,19 +105,16 @@ describe("worker-loader", () => {
                 ],
             },
         }).then((stats) => {
-            const files = stats.toJson().children
-                .map(item => item.chunks)
-                .reduce((acc, item) => acc.concat(item), [])
-                .map(item => item.files)
-                .map(item => `expected/name-options/${item}`)
-                .sort();
+            const files = getChunks(stats, testName).sort();
             assert.equal(files.length, 2);
-            assert.equal(files[0], "expected/name-options/w1.js");
-            assert.equal(files[1], "expected/name-options/w2.js");
+            assert.equal(files[0], `expected/${testName}/w1.js`);
+            assert.equal(files[1], `expected/${testName}/w2.js`);
             assert.notEqual(readFile(files[0]).indexOf("// w1 via worker options"), -1);
             assert.notEqual(readFile(files[1]).indexOf("// w2 via worker options"), -1);
-        })
-    );
+
+            assertStatsFileIsCorrect(stats, testName);
+        });
+    });
 
     it("should throw with inline option in query", () =>
         makeBundle("inline-query")
