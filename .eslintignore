@@ -1,4 +1,5 @@
 test/fixtures
 test/expected
+test/test.es5.js
 demo-angular
 

@@ -4,7 +4,8 @@
   "author": "NativeScript team",
   "description": "nativescript worker loader module for webpack",
   "scripts": {
-    "test": "mocha",
+    "pretest": "babel test/test.es6.js --out-file test/test.es5.js",
+    "test": "mocha test/test.es5.js",
     "posttest": "eslint ."
   },
   "eslintConfig": {
@@ -45,6 +46,8 @@
     "webpack": "^3.5.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "del": "^2.2.2",
     "eslint": "^3.16.0",
     "eslint-config-webpack": "^1.0.0",
