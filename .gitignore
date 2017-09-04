@@ -1,4 +1,4 @@
 node_modules
-test/expected
-test/test.es5.js
+src/test/expected
+src/test/test.es5.js
 
