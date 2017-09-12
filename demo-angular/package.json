@@ -46,7 +46,7 @@
     "webpack": "~3.2.0",
     "webpack-bundle-analyzer": "^2.8.2",
     "webpack-sources": "~1.0.1",
-    "worker-loader": "file:../src"
+    "nativescript-worker-loader": "file:../src"
   },
   "scripts": {
     "ns-bundle": "ns-bundle",

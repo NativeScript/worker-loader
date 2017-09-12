@@ -8,9 +8,9 @@
 
 <h2 align="center">Install</h2>
 
-This package is not published to npm yet! You can install it from GitHub instead:
+You can install this plugin from npm:
 ```bash
-npm i -D NativeScript/worker-loader
+npm i -D nativescript-worker-loader
 ```
 
 <h2 align="center"><a href="https://webpack.js.org/concepts/loaders">Usage</a></h2>
@@ -19,7 +19,7 @@ Import the worker file:
 
 ``` javascript
 // main.js
-var MyWorker = require("worker-loader!./file.js");
+var MyWorker = require("nativescript-worker-loader!./file.js");
 
 var worker = new MyWorker();
 worker.postMessage({a: 1});
@@ -32,7 +32,7 @@ Inline mode for workers is not supported!
 This package is shipped with NativeScriptWorkerPlugin. It will output a `__worker-chunks.json` to the build directory on every build. The file is required for internal use. You need to register the NativeScriptWorkerPlugin in your Webpack configuration:
 ``` javascript
 // webpack.config.js
-const { NativeScriptWorkerPlugin } = require("worker-loader/NativeScriptWorkerPlugin");
+const { NativeScriptWorkerPlugin } = require("nativescript-worker-loader/NativeScriptWorkerPlugin");
 // ...
 
 function getPlugins(platform, env) {
@@ -47,7 +47,7 @@ To set a custom name for the output script, use the `name` parameter. The name m
 which will be replaced with a content-dependent hash for caching purposes. For example:
 
 ``` javascript
-var MyWorker = require("worker-loader?name=outputWorkerName.[hash].js!./myWorker.js");
+var MyWorker = require("nativescript-worker-loader?name=outputWorkerName.[hash].js!./myWorker.js");
 ```
 
 The worker file can import dependencies just like any other file:
@@ -95,7 +95,7 @@ To integrate with TypeScript, you will need to define a custom module for the ex
 
 **typings/custom.d.ts**
 ```
-declare module "worker-loader!*" {
+declare module "nativescript-worker-loader!*" {
   const content: any;
   export = content;
 }
@@ -103,7 +103,7 @@ declare module "worker-loader!*" {
 
 **App.ts**
 ```
-import * as MyWorker from "worker-loader!../../worker";
+import * as MyWorker from "nativescript-worker-loader!../../worker";
 const worker: Worker = new MyWorker();
 ```
 
@@ -117,7 +117,7 @@ If you wrote your worker scripts in plain JavaScript, you can require them.
 
 Usage with webpack:
 ``` ts
-const WorkerScript = require("worker-loader!./worker-script.js");
+const WorkerScript = require("nativescript-worker-loader!./worker-script.js");
 const worker = new WorkerScript();
 ```
 
@@ -132,7 +132,7 @@ Or you can use the `TNS_WEBPACK` global variable to find out if your app is buil
 ``` ts
 let worker: Worker;
 if (global.["TNS_WEBPACK"]) {
-    const WorkerScript = require("worker-loader!./worker-script.js");
+    const WorkerScript = require("nativescript-worker-loader!./worker-script.js");
     worker = new WorkerScript();
 } else {
     worker = new Worker("./worker-script.js");
@@ -143,7 +143,7 @@ However, if you wrote your worker scripts with TypeScript, you cannot use the sa
 
 Usage with webpack:
 ``` ts
-import * as WorkerScript from "worker-loader!./worker-script";
+import * as WorkerScript from "nativescript-worker-loader!./worker-script";
 const worker = new WorkerScript();
 ```
 

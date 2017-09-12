@@ -1,5 +1,5 @@
 {
-  "name": "worker-loader",
+  "name": "nativescript-worker-loader",
   "version": "0.8.1",
   "author": "NativeScript team",
   "description": "nativescript worker loader module for webpack",

@@ -6,7 +6,7 @@ const nativescriptTarget = require("nativescript-dev-webpack/nativescript-target
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const { NativeScriptWorkerPlugin } = require("worker-loader/NativeScriptWorkerPlugin");
+const { NativeScriptWorkerPlugin } = require("nativescript-worker-loader/NativeScriptWorkerPlugin");
 
 const { AotPlugin } = require("@ngtools/webpack");
 
