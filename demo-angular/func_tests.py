@@ -17,7 +17,7 @@ def remove_log(file_path):
 def execute_command(command, out_file):
     def fork_it():
         print "Executing " + command
-        os.system(command + ' |& tee ' + out_file)
+        os.system(command + " 1> " + out_file + " 2>&1")
 
     t = multiprocessing.Process(target=fork_it)
     t.daemon = True
