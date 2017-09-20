@@ -131,7 +131,7 @@ const worker = new Worker("./worker-script.js");
 Or you can use the `TNS_WEBPACK` global variable to find out if your app is built with webpack or not:
 ``` ts
 let worker: Worker;
-if (global.["TNS_WEBPACK"]) {
+if (global["TNS_WEBPACK"]) {
     const WorkerScript = require("nativescript-worker-loader!./worker-script.js");
     worker = new WorkerScript();
 } else {
