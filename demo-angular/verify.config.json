@@ -1,0 +1,88 @@
+{
+    "$schema": "./node_modules/verify-ns-build/verify-schema.json",
+    "updateFlavors": [
+        {
+            "name": "latest",
+            "updateAngularDeps": true,
+            "updateWebpack": {
+                "configs": true,
+                "deps": true
+            }
+        },
+        {
+            "name": "next",
+            "dependencies": [
+                {
+                    "name": "tns-core-modules",
+                    "package": "next",
+                    "type": "dependency"
+                },
+                {
+                    "name": "nativescript-angular",
+                    "package": "next",
+                    "type": "dependency"
+                },
+                {
+                    "name": "nativescript-dev-webpack",
+                    "package": "next",
+                    "type": "devDependency"
+                },
+                {
+                    "name": "android",
+                    "package": "next",
+                    "type": "nsPlatform"
+                },
+                {
+                    "name": "ios",
+                    "package": "next",
+                    "type": "nsPlatform"
+                }
+            ],
+            "updateAngularDeps": true,
+            "updateWebpack": {
+                "configs": true,
+                "deps": true
+            }
+        }
+    ],
+    "verificationFlavors": [
+        {
+            "name": "android-webpack-full",
+            "verifications": [
+                {
+                    "platform": "android",
+                    "type": "run",
+                    "bundle": true,
+                    "tnsOptions": [
+                        "--env.report",
+                        "--env.aot",
+                        "--env.snapshot",
+                        "--env.uglify"
+                    ],
+                    "expectedInOutput": [
+                        "Inside JS worker...",
+                        "JS worker",
+                        "Inside TS worker...",
+                        "TS Worker"
+                    ],
+                    "trackerTimeout": 5000
+                }
+            ]
+        },
+        {
+            "name": "ios-webpack-full",
+            "verifications": [
+                {
+                    "platform": "ios",
+                    "type": "run",
+                    "bundle": true,
+                    "tnsOptions": [
+                        "--env.report",
+                        "--env.aot",
+                        "--env.uglify"
+                    ]
+                }
+            ]
+        }
+    ]
+}
