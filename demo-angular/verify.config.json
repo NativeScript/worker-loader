@@ -2,12 +2,7 @@
     "$schema": "./node_modules/verify-ns-build/verify-schema.json",
     "updateFlavors": [
         {
-            "name": "latest",
-            "updateAngularDeps": true,
-            "updateWebpack": {
-                "configs": true,
-                "deps": true
-            }
+            "name": "default"
         },
         {
             "name": "next",
@@ -47,7 +42,7 @@
     ],
     "verificationFlavors": [
         {
-            "name": "android-webpack-full",
+            "name": "default",
             "verifications": [
                 {
                     "platform": "android",
@@ -66,12 +61,7 @@
                         "TS Worker"
                     ],
                     "trackerTimeout": 5000
-                }
-            ]
-        },
-        {
-            "name": "ios-webpack-full",
-            "verifications": [
+                },
                 {
                     "platform": "ios",
                     "type": "run",
@@ -80,8 +70,15 @@
                         "--env.report",
                         "--env.aot",
                         "--env.uglify"
-                    ]
-                }
+                    ],
+                     "expectedInOutput": [
+                        "Inside JS worker...",
+                        "JS worker",
+                        "Inside TS worker...",
+                        "TS Worker"
+                    ],
+                    "trackerTimeout": 5000
+               }
             ]
         }
     ]
