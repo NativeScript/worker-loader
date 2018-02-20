@@ -2,9 +2,6 @@
     "$schema": "./node_modules/verify-ns-build/verify-schema.json",
     "updateFlavors": [
         {
-            "name": "default"
-        },
-        {
             "name": "next",
             "dependencies": [
                 {
