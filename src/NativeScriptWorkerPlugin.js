@@ -11,6 +11,10 @@ exports.NativeScriptWorkerPlugin = (function () {
         compiler.plugin("this-compilation", (compilation) => {
             
             compilation.plugin(["optimize-chunks"], (chunks) => {
+                if (!compilation.workerFiles) {
+                    return;
+                }
+
                 const workersFullPath = [];
 
                 for (const chunk of chunks) {
