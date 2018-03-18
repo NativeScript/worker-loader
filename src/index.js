@@ -1,5 +1,6 @@
 "use strict";
 
+const { basename } = require("path");
 const loaderUtils = require("loader-utils");
 const validateOptions = require("schema-utils");
 const optionsSchema = require("./options.json");
@@ -39,7 +40,12 @@ module.exports = function workerLoader(content, map, meta) {
 
     this._compilation.workerFiles.set(this.data.path, `${filenamePrefix}.worker.js`);
 
-    return `module.exports = function() {\n\treturn ${getWorker(filenamePrefix + ".starter.js")};\n};`;
+    // require.context is used only to add the module as dependency so webpack can build it
+    return `
+module.exports = function() {
+    require.context("~/", true, /${basename(this.data.path)}$/);
+    return ${getWorker(filenamePrefix + ".starter.js")};
+};`;
 };
 
 module.exports.pitch = function (request, preceding, data) {

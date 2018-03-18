@@ -34,8 +34,6 @@ exports.NativeScriptWorkerPlugin = (function () {
                             this.addAsset(compilation, fileName.replace(".worker.js", ".starter.js"), this.generateStarterModule(fileName))
 
                             workersFullPath.push(resolve(compiler.outputPath, fileName));
-                            // console.log(join(compiler.outputPath, fileName));
-                            // return;
                         }
                     }
                 }
@@ -53,7 +51,11 @@ exports.NativeScriptWorkerPlugin = (function () {
     };
 
     NativeScriptWorkerPlugin.prototype.generateStarterModule = function (worker) {
-        return `require("./${this.commonChunkName}");
+        // global.__worker is used to prevent loading UI related imports from the vendor chunk inside the worker
+        return `
+global = global || {};
+global.__worker = true;
+require("./${this.commonChunkName}");
 require("./${parse(worker).name}");`
     }
 
