@@ -2,9 +2,11 @@ const { parse, resolve } = require("path");
 const { RawSource } = require("webpack-sources");
 
 exports.NativeScriptWorkerPlugin = (function () {
-    function NativeScriptWorkerPlugin({commonChunkName}) {
+    function NativeScriptWorkerPlugin(options) {
+        options = options || {};
+
         this.files = {};
-        this.commonChunkName = commonChunkName;
+        this.commonChunkName = options.commonChunkName || "vendor";
     }
 
     NativeScriptWorkerPlugin.prototype.apply = function (compiler) {
