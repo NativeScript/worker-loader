@@ -1,5 +1,6 @@
 {
     "$schema": "./node_modules/verify-ns-build/verify-schema.json",
+    "releaseConfigPath": "./.release-args.json",
     "updateFlavors": [
         {
             "name": "next",
