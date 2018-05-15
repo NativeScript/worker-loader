@@ -1,0 +1,83 @@
+{
+    "$schema": "./node_modules/verify-ns-build/verify-schema.json",
+    "releaseConfigPath": "./.release-args.json",
+    "updateFlavors": [
+        {
+            "name": "next",
+            "dependencies": [
+                {
+                    "name": "tns-core-modules",
+                    "package": "next",
+                    "type": "dependency"
+                },
+                {
+                    "name": "nativescript-angular",
+                    "package": "next",
+                    "type": "dependency"
+                },
+                {
+                    "name": "nativescript-dev-webpack",
+                    "package": "next",
+                    "type": "devDependency"
+                },
+                {
+                    "name": "android",
+                    "package": "next",
+                    "type": "nsPlatform"
+                },
+                {
+                    "name": "ios",
+                    "package": "next",
+                    "type": "nsPlatform"
+                }
+            ],
+            "updateAngularDeps": true,
+            "updateWebpack": {
+                "configs": true,
+                "deps": true
+            }
+        }
+    ],
+    "verificationFlavors": [
+        {
+            "name": "default",
+            "verifications": [
+                {
+                    "platform": "android",
+                    "type": "run",
+                    "bundle": true,
+                    "tnsOptions": [
+                        "--env.report",
+                        "--env.aot",
+                        "--env.snapshot",
+                        "--env.uglify"
+                    ],
+                    "expectedInOutput": [
+                        "Inside JS worker...",
+                        "JS worker",
+                        "Inside TS worker...",
+                        "TS Worker"
+                    ],
+                    "trackerTimeout": 5000
+                },
+                {
+                    "platform": "ios",
+                    "type": "run",
+                    "bundle": true,
+                    "tnsOptions": [
+                        "--env.report",
+                        "--env.aot",
+                        "--env.uglify"
+                    ],
+                     "expectedInOutput": [
+                        "Inside JS worker...",
+                        "JS worker",
+                        "Inside TS worker...",
+                        "TS Worker"
+                    ],
+                    "trackerTimeout": 5000
+               }
+            ]
+        }
+    ]
+}
