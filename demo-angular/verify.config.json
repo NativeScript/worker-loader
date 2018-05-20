@@ -31,11 +31,7 @@
                     "type": "nsPlatform"
                 }
             ],
-            "updateAngularDeps": true,
-            "updateWebpack": {
-                "configs": true,
-                "deps": true
-            }
+            "updateAngularDeps": true
         }
     ],
     "verificationFlavors": [

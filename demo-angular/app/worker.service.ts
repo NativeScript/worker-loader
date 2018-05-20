@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 // add if building with webpack
- import * as TsWorker from "nativescript-worker-loader!./workers/typescript.worker";
+import * as TsWorker from "nativescript-worker-loader!./workers/typescript.worker";
 
 @Injectable()
 export class WorkerService {

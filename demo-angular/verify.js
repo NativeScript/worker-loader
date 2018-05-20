@@ -19,7 +19,7 @@
 
     const config = "./verify.config.json";
     await verify(config, "none", "latest-verify-report");
-    await verify(config, "next", "next-verify-report");
+    // await verify(config, "next", "next-verify-report");
 })();
 
 process.on("unhandledRejection", err => { 
