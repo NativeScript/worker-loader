@@ -6,108 +6,157 @@
   <p>This is a fork of the official Worker Loader for Webpack.</p> 
 </div>
 
-<h2 align="center">Install</h2>
+## Install
 
 You can install this plugin from npm:
-```bash
+``` bash
 npm i -D nativescript-worker-loader
 ```
 
-<h2 align="center"><a href="https://webpack.js.org/concepts/loaders">Usage</a></h2>
+## Usage in JavaScript projects
 
-Import the worker file:
+1. Write a worker file:
+``` javascript
+// app/worker.js
+require("globals");
+
+global.onmessage = function(msg) {
+    console.log("Inside JS worker...");
+    global.postMessage("JS worker");
+}
+```
+2. Import the worker file with the webpack loader inlined:
 
 ``` javascript
-// main.js
-var MyWorker = require("nativescript-worker-loader!./file.js");
+// app/main.js
+const MyWorker = require("nativescript-worker-loader!./worker.js");
 
-var worker = new MyWorker();
+const worker = new MyWorker();
 worker.postMessage({a: 1});
 worker.onmessage = function(event) {...};
 worker.addEventListener("message", function(event) {...});
 ```
 
-Inline mode for workers is not supported!
+3. Configure your webpack.config.js to use the NativeScriptWorkerPlugin.
 
-This package is shipped with NativeScriptWorkerPlugin. It will output a `__worker-chunks.json` to the build directory on every build. The file is required for internal use. You need to register the NativeScriptWorkerPlugin in your Webpack configuration:
 ``` javascript
 // webpack.config.js
 const { NativeScriptWorkerPlugin } = require("nativescript-worker-loader/NativeScriptWorkerPlugin");
 // ...
 
-function getPlugins(platform, env) {
-    let plugins = [
-        new NativeScriptWorkerPlugin(),
-        // ...
-    ]
+module.exports = env => {
+    // ...
+
+    const config = {
+        //...
+        plugins: [
+            new NativeScriptWorkerPlugin(),
+            // ...
+        ]
+    }
 }
 ```
 
-To set a custom name for the output script, use the `name` parameter. The name may contain the string `[hash]`,
-which will be replaced with a content-dependent hash for caching purposes. For example:
+## Usage in TypeScript projects
 
-``` javascript
-var MyWorker = require("nativescript-worker-loader?name=outputWorkerName.[hash].js!./myWorker.js");
-```
+> **Note**: If you write your worker files in plain JS, you can configure your project by following the steps from the previous section. If you need to write them in TS, follow the steps in this section.
 
-The worker file can import dependencies just like any other file:
+1. Define a custom module for your worker's exports:
 
-``` javascript
-// file.js
-var _ = require('lodash')
-
-var o = {foo: 'foo'}
-
-_.has(o, 'foo') // true
-
-// Post data to parent thread
-self.postMessage({foo: 'foo'}) 
-
-// Respond to message from parent thread
-self.addEventListener('message', function(event){ console.log(event); });  
-```
-
-You can even use ES6 modules if you have the babel-loader configured:
-
-``` javascript
-// file.js
-import _ from 'lodash'
-
-let o = {foo: 'foo'}
-
-_.has(o, 'foo') // true
-
-// Post data to parent thread
-self.postMessage({foo: 'foo'}) 
-
-// Respond to message from parent thread
-self.addEventListener('message', (event) => { console.log(event); });
-```
-
-### Demo apps
-For usage with NativeScript Angular, check out the `demo-angular` app in this repo.
-
-For usage with NativeScript apps written in plain JavaScript, check out this repo: https://github.com/NativeScript/demo-workers.
-
-### Integrating with TypeScript
-
-To integrate with TypeScript, you will need to define a custom module for the exports of your worker. You will also need to cast the new worker as the `Worker` type:
-
-**typings/custom.d.ts**
-```
+``` typescript
+// typings/custom.d.ts
 declare module "nativescript-worker-loader!*" {
   const content: any;
   export = content;
 }
 ```
 
-**App.ts**
-```
-import * as MyWorker from "nativescript-worker-loader!../../worker";
-const worker: Worker = new MyWorker();
+2. Add the typings to `references.d.ts`:
+``` typescript
+// references.d.ts
+
+/// <reference path="./typings/custom.d.ts" /> Workerloader
 ```
 
-### Web workers with/without webpack
+3. Write a worker file:
+
+``` typescript
+// app/worker.ts
+import "globals";
+
+const context: Worker = self as any;
+
+context.onmessage = msg => {
+    setTimeout(() => {
+        console.log("Inside TS worker...");
+        (<any>global).postMessage("TS Worker");
+    }, 500)
+};
+```
+
+4. Import and use the worker file in the following way:
+``` typescript
+// app/main.ts
+import * as TsWorker from "nativescript-worker-loader!./workers/typescript.worker";
+
+const worker = new TsWorker();
+```
+
+5. Configure your webpack.config.js to use the NativeScriptWorkerPlugin.
+
+``` javascript
+// webpack.config.js
+const { NativeScriptWorkerPlugin } = require("nativescript-worker-loader/NativeScriptWorkerPlugin");
+// ...
+
+module.exports = env => {
+    // ...
+
+    const config = {
+        //...
+        plugins: [
+            new NativeScriptWorkerPlugin(),
+            // ...
+        ]
+    }
+}
+```
+
+6. **[Angular projects only]** Install `ts-loader`:
+
+``` bash
+npm i -D ts-loader
+```
+
+7. **[Angular projects only]** Update your webpack.config.js to compile the worker files using `ts-loader` instead of the `ngtools/webpack` loader. The following code assumes that all your worker files are named in the format - ```some-name.worker.ts```. You can use a different naming convention but you have to setup the webpack loaders to also follow it.
+
+``` javascript
+// webpack.config.js
+
+module.exports = env => {
+    // ...
+
+    const config = {
+        //...
+        module: {
+            rules: [
+                // Compile TypeScript files with ahead-of-time compiler.
+                {
+                    test: /.ts$/, exclude: /.worker.ts$/, use: [
+                        "nativescript-dev-webpack/moduleid-compat-loader",
+                        "@ngtools/webpack",
+                    ]
+                },
+
+                // Compile Worker files with ts-loader
+                { test: /\.worker.ts$/, loader: "ts-loader" },
+            ]
+        }
+    }
+}
+```
+
+## Web workers with/without webpack
 
 Please note that the way to spawn a Worker with webpack differs from the way described in the WWW Web Workers' specification (also followed by NativeScript).
 
@@ -152,3 +201,13 @@ Usage without webpack:
 const worker = new Worker("./worker-script");
 
 ```
+
+## Demo apps
+For usage with NativeScript Angular, check out [`demo-angular`](./demo-angular) in this repo.
+
+For usage with NativeScript apps written in plain JavaScript, check out this repo: https://github.com/NativeScript/demo-workers.
+
+## Related docs
+
+1. [Workers in NativeScript](https://docs.nativescript.org/core-concepts/multithreading-model)
+2. [Webpack for NativeScript apps](https://docs.nativescript.org/best-practices/bundling-with-webpack)
