@@ -6,7 +6,7 @@ exports.NativeScriptWorkerPlugin = (function () {
     }
 
     NativeScriptWorkerPlugin.prototype.apply = function (compiler) {
-        compiler.plugin("emit", (compilation, cb) => {
+        compiler.hooks.emit.tapAsync("NativeScriptWorkerPlugin", (compilation, cb) => {
             if (!compilation.workerChunks) {
                 return cb();
             }

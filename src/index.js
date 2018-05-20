@@ -46,7 +46,7 @@ module.exports.pitch = function pitch(request) {
     this._compilation.workerChunks = [];
 
     const filename = loaderUtils.interpolateName(this, options.name || "[hash].worker.js", {
-        context: options.context || this.options.context,
+        context: options.context || this.rootContext,
         regExp: options.regExp,
     });
 
@@ -56,25 +56,18 @@ module.exports.pitch = function pitch(request) {
         namedChunkFilename: null,
     };
 
-    if (this.options && this.options.worker && this.options.worker.output) {
-        Object.keys(this.options.worker.output).forEach((name) => {
-            outputOptions[name] = this.options.worker.output[name];
-        });
-    }
-
     const workerCompiler = this._compilation.createChildCompiler("worker", outputOptions);
-    workerCompiler.apply(new WebWorkerTemplatePlugin(outputOptions));
+    new WebWorkerTemplatePlugin(outputOptions).apply(workerCompiler);
     if (this.target !== "webworker" && this.target !== "web") {
-        workerCompiler.apply(new NodeTargetPlugin());
+        new NodeTargetPlugin().apply(workerCompiler);
     }
 
-    workerCompiler.apply(new SingleEntryPlugin(this.context, `!!${request}`, "main"));
-    if (this.options && this.options.worker && this.options.worker.plugins) {
-        this.options.worker.plugins.forEach(plugin => workerCompiler.apply(plugin));
-    }
+    new SingleEntryPlugin(this.context, `!!${request}`, "main").apply(workerCompiler);
 
     const subCache = `subcache ${__dirname} ${request}`;
-    workerCompiler.plugin("compilation", compilation => {
+    const plugin = { name: 'WorkerLoader' };
+ 
+    workerCompiler.hooks.compilation.tap(plugin, compilation => {
         if (compilation.cache) {
             if (!compilation.cache[subCache]) {
                 compilation.cache[subCache] = {};
