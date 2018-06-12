@@ -52,7 +52,7 @@
     "eslint": "^3.16.0",
     "eslint-config-webpack": "^1.0.0",
     "eslint-plugin-import": "^2.2.0",
-    "mocha": "^3.2.0"
+    "mocha": "^5.2.0"
   },
   "repository": {
     "type": "git",
