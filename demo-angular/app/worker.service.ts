@@ -7,16 +7,16 @@ export class WorkerService {
 
     initTsWorker() {
         // add if building with webpack
-        let w: any;
+        let worker: any;
 
         if ((<any>global).TNS_WEBPACK) {
-            var TsWorkerr = require("nativescript-worker-loader!./workers/typescript.worker.js");
-            w = new TsWorkerr();
+            var TsWorker = require("nativescript-worker-loader!./workers/typescript.worker.js");
+            worker = new TsWorker();
         } else {
-            w = new Worker("./workers/typescript.worker.js");
+            worker = new Worker("./workers/typescript.worker.js");
         }
 
-        return w;
+        return worker;
     } 
 
     initJsWorker() {
