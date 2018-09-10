@@ -1,8 +1,5 @@
 import { Injectable } from "@angular/core";
 
-// add if building with webpack
-import * as TsWorker from "nativescript-worker-loader!./workers/typescript.worker";
-
 @Injectable()
 export class WorkerService {
     constructor() {
@@ -10,12 +7,16 @@ export class WorkerService {
 
     initTsWorker() {
         // add if building with webpack
-        const worker = new TsWorker();
+        let w: any;
 
-        // remove if building with webpack
-        // const worker = new Worker("./workers/typescript.worker");
+        if ((<any>global).TNS_WEBPACK) {
+            var TsWorkerr = require("nativescript-worker-loader!./workers/typescript.worker.js");
+            w = new TsWorkerr();
+        } else {
+            w = new Worker("./workers/typescript.worker.js");
+        }
 
-        return worker;
+        return w;
     } 
 
     initJsWorker() {

@@ -5,11 +5,8 @@
   "repository": "<fill-your-repository-here>",
   "nativescript": {
     "id": "org.nativescript.webworkerdemo",
-    "tns-ios": {
-      "version": "next"
-    },
     "tns-android": {
-      "version": "next"
+      "version": "4.2.0"
     }
   },
   "dependencies": {
@@ -22,23 +19,22 @@
     "@angular/platform-browser": "~6.1.0",
     "@angular/platform-browser-dynamic": "~6.1.0",
     "@angular/router": "~6.1.0",
-    "nativescript-angular": "rc",
+    "nativescript-angular": "~6.1.0",
     "nativescript-theme-core": "~1.0.2",
     "reflect-metadata": "~0.1.8",
-    "rxjs": "~6.1.0",
-    "tns-core-modules": "~4.0.0",
-    "zone.js": "^0.8.4"
+    "rxjs": "^6.0.0",
+    "tns-core-modules": "~4.2.0",
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "~6.1.0",
-    "@ngtools/webpack": "~6.1.0",
+    "@angular/compiler-cli": "~6.1.7",
+    "@ngtools/webpack": "~6.2.0",
     "babel-traverse": "6.26.0",
     "babel-types": "6.26.0",
     "babylon": "6.18.0",
     "lazy": "1.0.11",
-    "nativescript-css-loader": "~0.26.0",
-    "nativescript-dev-typescript": "^0.7.1",
-    "nativescript-dev-webpack": "next",
+    "nativescript-dev-typescript": "^0.7.3",
+    "nativescript-dev-webpack": "^0.16.0",
     "ts-loader": "^4.3.0",
     "typescript": "~2.7.2",
     "verify-ns-build": "github:nativescript/verify-ns-build"
