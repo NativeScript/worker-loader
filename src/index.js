@@ -43,7 +43,9 @@ module.exports.pitch = function pitch(request) {
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
     validateSchema(optionsSchema, options, "Worker Loader");
-    this._compilation.workerChunks = [];
+    if (!this._compilation.workerChunks) {
+        this._compilation.workerChunks = [];
+    }
 
     const filename = loaderUtils.interpolateName(this, options.name || "[hash].worker.js", {
         context: options.context || this.rootContext,
