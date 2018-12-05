@@ -6,4 +6,8 @@ package-lock.json
 
 app/**/*.js
 !app/workers/javascript.worker.js
-
+e2e/reports
+test-results.xml
+e2e/**/*.js
+e2e/**/*.js.map
+package-lock.json

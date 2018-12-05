@@ -4,20 +4,20 @@ import { WorkerService } from "./worker.service";
 
 @Component({ template: `` })
 export class AppComponent implements OnInit {
-    private firstWorker: Worker;
-    private secondWorker: Worker;
+    private tsWorker: Worker;
+    private jsWorker: Worker;
 
     constructor(private workerService: WorkerService) { }
 
     ngOnInit() {
-        this.firstWorker = this.workerService.initTsWorker();
-        this.secondWorker = this.workerService.initJsWorker();
+        this.tsWorker = this.workerService.initTsWorker();
+        this.jsWorker = this.workerService.initJsWorker();
 
-        this.firstWorker.postMessage("Hello, JS!");
-        this.secondWorker.postMessage("Hello, TS!");
+        this.tsWorker.postMessage("Ts worker loader executed!");
+        this.jsWorker.postMessage("Js worker loader executed!");
 
-        this.firstWorker.onmessage = m => this.logWorkerMessage(m);
-        this.secondWorker.onmessage = m => this.logWorkerMessage(m);
+        this.tsWorker.onmessage = m => this.logWorkerMessage(m);
+        this.jsWorker.onmessage = m => this.logWorkerMessage(m);
     }
 
     private logWorkerMessage(message: MessageEvent) {
