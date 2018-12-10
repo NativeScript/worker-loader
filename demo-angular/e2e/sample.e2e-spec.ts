@@ -23,6 +23,7 @@ describe("sample scenario", () => {
     it("assert logs from worker loaders", async () => {
         const expectedMsgs = ['Inside JS worker...', '{', '}', 'data": "Js worker loader executed!"', 'Inside TS worker...', '"data": "Ts worker loader executed!"', 'TS Worker'];
         const logType = driver.isAndroid ? LogType.logcat : LogType.syslog;
+        await driver.wait(3000);
         const logs = await driver.getlog(logType);
         console.log("LOGS: ", logs);
         const filter = driver.isAndroid ? "JS      :" : "";
