@@ -32,11 +32,20 @@ const getWorker = file => {
     return `new Worker(${workerPublicPath})`;
 };
 
-module.exports = function workerLoader() {};
+module.exports = function workerLoader() { };
+
+let requests = [];
 
 module.exports.pitch = function pitch(request) {
     if (!this.webpack) {
         throw new Error("Only usable with webpack");
+    }
+
+    // handle calls to itself to avoid an infinite loop
+    if (requests.indexOf(request) === -1) {
+        requests.push(request);
+    } else {
+        return "";
     }
 
     this.cacheable(false);
@@ -68,7 +77,7 @@ module.exports.pitch = function pitch(request) {
 
     const subCache = `subcache ${__dirname} ${request}`;
     const plugin = { name: 'WorkerLoader' };
- 
+
     workerCompiler.hooks.compilation.tap(plugin, compilation => {
         if (compilation.cache) {
             if (!compilation.cache[subCache]) {
