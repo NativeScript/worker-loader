@@ -34,7 +34,7 @@ const getWorker = file => {
 
 module.exports = function workerLoader() { };
 
-let requests = [];
+const requests = [];
 
 module.exports.pitch = function pitch(request) {
     if (!this.webpack) {
@@ -76,7 +76,7 @@ module.exports.pitch = function pitch(request) {
     new SingleEntryPlugin(this.context, `!!${request}`, "main").apply(workerCompiler);
 
     const subCache = `subcache ${__dirname} ${request}`;
-    const plugin = { name: 'WorkerLoader' };
+    const plugin = { name: "WorkerLoader" };
 
     workerCompiler.hooks.compilation.tap(plugin, compilation => {
         if (compilation.cache) {
