@@ -1,6 +1,6 @@
 {
   "name": "nativescript-worker-loader",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "NativeScript team",
   "description": "nativescript worker loader module for webpack",
   "scripts": {
