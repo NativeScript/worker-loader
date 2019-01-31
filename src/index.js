@@ -41,16 +41,17 @@ module.exports.pitch = function pitch(request) {
         throw new Error("Only usable with webpack");
     }
 
+    this.cacheable(false);
+    const callback = this.async();
+    const options = loaderUtils.getOptions(this) || {};
+
     // handle calls to itself to avoid an infinite loop
     if (requests.indexOf(request) === -1) {
         requests.push(request);
     } else {
-        return "";
+        return callback(null, "");
     }
 
-    this.cacheable(false);
-    const callback = this.async();
-    const options = loaderUtils.getOptions(this) || {};
     validateSchema(optionsSchema, options, "Worker Loader");
     if (!this._compilation.workerChunks) {
         this._compilation.workerChunks = [];
@@ -100,7 +101,7 @@ module.exports.pitch = function pitch(request) {
             return callback(null, `module.exports = function() {\n\treturn ${workerFactory};\n};`);
         }
 
-        return callback(null, null);
+        return callback(null, "");
     });
 };
 
