@@ -97,9 +97,11 @@ module.exports.pitch = function pitch(request) {
             const workerFile = entries[0].files[0];
             this._compilation.workerChunks.push(workerFile);
             const workerFactory = getWorker(workerFile);
-            const processed = requests.indexOf(request)
-            if (processed > -1) {
-                requests.splice(processed, 1);
+
+            // invalidate cache
+            const processedIndex = requests.indexOf(request)
+            if (processedIndex > -1) {
+                requests.splice(processedIndex, 1);
             }
 
             return callback(null, `module.exports = function() {\n\treturn ${workerFactory};\n};`);
