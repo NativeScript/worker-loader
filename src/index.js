@@ -99,7 +99,7 @@ module.exports.pitch = function pitch(request) {
             const workerFactory = getWorker(workerFile);
 
             // invalidate cache
-            const processedIndex = requests.indexOf(request)
+            const processedIndex = requests.indexOf(request);
             if (processedIndex > -1) {
                 requests.splice(processedIndex, 1);
             }
