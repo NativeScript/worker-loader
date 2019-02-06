@@ -81,10 +81,7 @@ module.exports.pitch = function pitch(request) {
 
     workerCompiler.hooks.compilation.tap(plugin, compilation => {
         if (compilation.cache) {
-            if (!compilation.cache[subCache]) {
-                compilation.cache[subCache] = {};
-            }
-            compilation.cache = compilation.cache[subCache];
+            compilation.cache = compilation.cache[subCache] || {};
         }
     });
 
