@@ -1,15 +1,16 @@
-import { AppiumDriver, createDriver, LogType } from "nativescript-dev-appium";
+import { AppiumDriver, createDriver, LogType, nsCapabilities } from "nativescript-dev-appium";
 import { assert } from "chai";
 
-describe("sample scenario", () => {
+describe("sample scenario", async function() {
     const defaultWaitTime = 5000;
     let driver: AppiumDriver;
 
-    before(async () => {
+    before(async function() {
+        nsCapabilities.testReporter.context = this;
         driver = await createDriver();
     });
 
-    after(async () => {
+    after(async function() {
         await driver.quit();
         console.log("Quit driver!");
     });
@@ -20,10 +21,10 @@ describe("sample scenario", () => {
         }
     });
 
-    it("assert logs from worker loaders", async () => {
+    it("assert logs from worker loaders", async function() {
         const expectedMsgs = ['Inside JS worker...', '{', '}', 'data": "Js worker loader executed!"', 'Inside TS worker...', '"data": "Ts worker loader executed!"', 'TS Worker'];
         const logType = driver.isAndroid ? LogType.logcat : LogType.syslog;
-        await driver.wait(3000);
+        await driver.wait(driver.defaultWaitTime);
         const logs = await driver.getlog(logType);
         console.log("LOGS: ", logs);
         const filter = driver.isAndroid ? "JS      :" : "";
