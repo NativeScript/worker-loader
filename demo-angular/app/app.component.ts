@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
 import { WorkerService } from "./worker.service";
+import { sharedFunction } from "./shared";
 
 @Component({ template: `` })
 export class AppComponent implements OnInit {
@@ -10,6 +11,7 @@ export class AppComponent implements OnInit {
     constructor(private workerService: WorkerService) { }
 
     ngOnInit() {
+        sharedFunction("app");
         this.tsWorker = this.workerService.initTsWorker();
         this.jsWorker = this.workerService.initJsWorker();
 
