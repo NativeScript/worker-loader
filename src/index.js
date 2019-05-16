@@ -6,6 +6,7 @@ const WebWorkerTemplatePlugin = require("webpack/lib/webworker/WebWorkerTemplate
 const NodeTargetPlugin = require("webpack/lib/node/NodeTargetPlugin");
 const SingleEntryPlugin = require("webpack/lib/SingleEntryPlugin");
 const optionsSchema = require("./options.json");
+const NATIVESCRIPT_WORKER_PLUGIN_SYMBOL = require("./symbol");
 
 const validateSchema = (schema, options, pluginName) => {
     if (options.inline) {
@@ -44,6 +45,8 @@ module.exports.pitch = function pitch(request) {
     this.cacheable(false);
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
+    const compilerOptions = this._compiler.options || {};
+    const pluginOptions = compilerOptions.plugins.find(p => p[NATIVESCRIPT_WORKER_PLUGIN_SYMBOL]).options;
 
     // handle calls to itself to avoid an infinite loop
     if (requests.indexOf(request) === -1) {
@@ -68,7 +71,18 @@ module.exports.pitch = function pitch(request) {
         namedChunkFilename: null,
     };
 
-    const workerCompiler = this._compilation.createChildCompiler("worker", outputOptions);
+    const plugins = (pluginOptions.plugins || []).map(plugin => {
+        if (typeof plugin !== 'string') {
+            return plugin;
+        }
+        const found = compilerOptions.plugins.find(p => p.constructor.name === plugin);
+        if (!found) {
+            console.warn(`Warning (worker-plugin): Plugin "${plugin}" is not found.`);
+        }
+        return found;
+    });
+
+    const workerCompiler = this._compilation.createChildCompiler("worker", outputOptions, plugins);
     new WebWorkerTemplatePlugin(outputOptions).apply(workerCompiler);
     if (this.target !== "webworker" && this.target !== "web") {
         new NodeTargetPlugin().apply(workerCompiler);
