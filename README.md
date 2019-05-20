@@ -156,7 +156,7 @@ module.exports = env => {
 }
 ```
 
-8. **[Angular projects only]** Update your webpack.config.js inherit `AngularCompilerPlugin` to allow the use of shared code.
+8. **[Angular projects only]** Update your webpack.config.js to inherit the current `ngCompilerPlugin` to allow the use of shared code.
 
 ``` javascript
 // webpack.config.js
@@ -168,7 +168,7 @@ module.exports = env => {
         //...
         plugins: [
             new NativeScriptWorkerPlugin({
-                plugins: [ngCompilerPlugin.constructor.name]
+                plugins: [ngCompilerPlugin]
             }),
             // ...
         ]
