@@ -168,7 +168,7 @@ module.exports = env => {
         //...
         plugins: [
             new NativeScriptWorkerPlugin({
-                plugins: ["AngularCompilerPlugin"]
+                plugins: [ngCompilerPlugin.constructor.name]
             }),
             // ...
         ]
