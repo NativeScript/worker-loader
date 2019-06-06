@@ -6,10 +6,10 @@
   "nativescript": {
     "id": "org.nativescript.webworkerdemo",
     "tns-ios": {
-      "version": "next"
+      "version": "latest"
     },
     "tns-android": {
-      "version": "next"
+      "version": "latest"
     }
   },
   "dependencies": {
@@ -22,11 +22,11 @@
     "@angular/platform-browser": "8.0.0",
     "@angular/platform-browser-dynamic": "8.0.0",
     "@angular/router": "8.0.0",
-    "nativescript-angular": "next",
+    "nativescript-angular": "latest",
     "nativescript-theme-core": "~1.0.2",
     "reflect-metadata": "~0.1.8",
     "rxjs": "^6.3.3",
-    "tns-core-modules": "next",
+    "tns-core-modules": "latest",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "nativescript-css-loader": "~0.26.0",
     "nativescript-dev-appium": "next",
     "nativescript-dev-typescript": "next",
-    "nativescript-dev-webpack": "next",
+    "nativescript-dev-webpack": "latest",
     "ts-loader": "^5.3.0",
     "typescript": "~3.4.5"
   },
