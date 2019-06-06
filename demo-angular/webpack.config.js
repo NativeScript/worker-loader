@@ -234,13 +234,14 @@ module.exports = env => {
 
                 {
                     test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+                    exclude: /.worker.ts$/,
                     use: [
                         "nativescript-dev-webpack/moduleid-compat-loader",
                         "nativescript-dev-webpack/lazy-ngmodule-hot-loader",
                         "@ngtools/webpack",
                     ]
                 },
-
+                { test: /\.worker.ts$/, loader: "ts-loader" },
                 // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
                 // Removing this will cause deprecation warnings to appear.
                 {
