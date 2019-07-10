@@ -3,7 +3,12 @@ import { Component, OnInit } from "@angular/core";
 import { WorkerService } from "./worker.service";
 import { sharedFunction } from "./shared";
 
-@Component({ template: `` })
+@Component({ template: `
+<StackLayout class="p-20">
+    <Label text="Angular Worker Demo" class="h1"></Label>
+    <Label text="Check console output" class="font-italic"></Label>
+<StackLayout>
+` })
 export class AppComponent implements OnInit {
     private tsWorker: Worker;
     private jsWorker: Worker;

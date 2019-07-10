@@ -1,4 +1,4 @@
-import "globals";
+import "tns-core-modules/globals";
 import { sharedFunction } from "../shared";
 
 const context: Worker = self as any;
