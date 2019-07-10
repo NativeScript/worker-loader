@@ -1,8 +1,11 @@
 const { resolve } = require("path");
 const { RawSource } = require("webpack-sources");
+const NATIVESCRIPT_WORKER_PLUGIN_SYMBOL = require("./symbol");
 
 exports.NativeScriptWorkerPlugin = (function () {
-    function NativeScriptWorkerPlugin() {
+    function NativeScriptWorkerPlugin(options) {
+        this.options = options || {};
+        this[NATIVESCRIPT_WORKER_PLUGIN_SYMBOL] = true;
     }
 
     NativeScriptWorkerPlugin.prototype.apply = function (compiler) {

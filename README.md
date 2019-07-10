@@ -156,6 +156,26 @@ module.exports = env => {
 }
 ```
 
+8. **[Angular projects only]** Update your webpack.config.js to inherit the current `ngCompilerPlugin` to allow the use of shared code.
+
+``` javascript
+// webpack.config.js
+
+module.exports = env => {
+    // ...
+
+    const config = {
+        //...
+        plugins: [
+            new NativeScriptWorkerPlugin({
+                plugins: [ngCompilerPlugin]
+            }),
+            // ...
+        ]
+    }
+}
+```
+
 ## Web workers with/without webpack
 
 Please note that the way to spawn a Worker with webpack differs from the way described in the WWW Web Workers' specification (also followed by NativeScript).
