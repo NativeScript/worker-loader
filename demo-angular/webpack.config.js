@@ -277,7 +277,9 @@ module.exports = env => {
             new nsWebpack.GenerateNativeScriptEntryPointsPlugin("bundle"),
             // For instructions on how to set up workers with webpack
             // check out https://github.com/nativescript/worker-loader
-            new NativeScriptWorkerPlugin(),
+            new NativeScriptWorkerPlugin({
+                plugins: [ngCompilerPlugin]
+            }),
             ngCompilerPlugin,
             // Does IPC communication with the {N} CLI to notify events when running in watch mode.
             new nsWebpack.WatchStateLoggerPlugin(),
