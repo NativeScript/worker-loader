@@ -21,15 +21,15 @@ const validateSchema = (schema, options, pluginName) => {
     validateOptions(schema, options, pluginName);
 };
 
-const getPublicPath = file => {
-    const root = JSON.stringify("./");
+const getPublicPath = (file, customDomain) => {
+    const root = customDomain ? "" : JSON.stringify("./ + ");
     const filePath = JSON.stringify(file);
 
-    return `${root} + __webpack_public_path__ + ${filePath}`;
+    return `${root}__webpack_public_path__ + ${filePath}`;
 };
 
-const getWorker = file => {
-    const workerPublicPath = getPublicPath(file);
+const getWorker = (file, customDomain) => {
+    const workerPublicPath = getPublicPath(file, customDomain);
     return `new Worker(${workerPublicPath})`;
 };
 
@@ -107,7 +107,7 @@ module.exports.pitch = function pitch(request) {
         if (entries[0]) {
             const workerFile = entries[0].files[0];
             this._compilation.workerChunks.push(workerFile);
-            const workerFactory = getWorker(workerFile);
+            const workerFactory = getWorker(workerFile, options.customDomain);
 
             // invalidate cache
             const processedIndex = requests.indexOf(request);
