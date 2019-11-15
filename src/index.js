@@ -92,8 +92,11 @@ module.exports.pitch = function pitch(request) {
 
     workerCompiler.hooks.thisCompilation.tap(plugin, compilation => {
         /**
-         * A dirty hack to disable HMR plugin in childCompilation - https://github.com/webpack/webpack/blob/4056506488c1e071dfc9a0127daa61bf531170bf/lib/HotModuleReplacementPlugin.js#L154;
-         * Once we update to webpack@4.40.3 and above this can be removed - https://github.com/webpack/webpack/commit/1c4138d6ac04b7b47daa5ec4475c0ae1b4f596a2
+         * A dirty hack to disable HMR plugin in childCompilation:
+         * https://github.com/webpack/webpack/blob/4056506488c1e071dfc9a0127daa61bf531170bf/lib/HotModuleReplacementPlugin.js#L154
+         *
+         * Once we update to webpack@4.40.3 and above this can be removed:
+         * https://github.com/webpack/webpack/commit/1c4138d6ac04b7b47daa5ec4475c0ae1b4f596a2
          */
         compilation.hotUpdateChunkTemplate = null;
     });
@@ -110,8 +113,11 @@ module.exports.pitch = function pitch(request) {
                 this.addDependency(fileName);
             });
             /**
-             * Clears the hash of the child compilation as it affects the hash of the parent compilation - https://github.com/webpack/webpack/blob/4056506488c1e071dfc9a0127daa61bf531170bf/lib/Compilation.js#L2281
-             * If we don't clear the hash an emit of runtime.js and an empty [somehash].hot-update.json will happen, which will restart the NS application.
+             * Clears the hash of the child compilation as it affects the hash of the parent compilation:
+             * https://github.com/webpack/webpack/blob/4056506488c1e071dfc9a0127daa61bf531170bf/lib/Compilation.js#L2281
+             *
+             * If we don't clear the hash an emit of runtime.js and an empty [somehash].hot-update.json will happen on save without changes.
+             * This will restart the NS application.
              */
             childCompilation.hash = "";
             const workerFile = entries[0].files[0];
