@@ -42,7 +42,6 @@ module.exports.pitch = function pitch(request) {
         throw new Error("Only usable with webpack");
     }
 
-    this.cacheable(false);
     const callback = this.async();
     const options = loaderUtils.getOptions(this) || {};
     const compilerOptions = this._compiler.options || {};
@@ -90,21 +89,17 @@ module.exports.pitch = function pitch(request) {
 
     new SingleEntryPlugin(this.context, `!!${request}`, "main").apply(workerCompiler);
 
-    const subCache = `subcache ${__dirname} ${request}`;
-    const plugin = { name: "WorkerLoader" };
-
-    workerCompiler.hooks.compilation.tap(plugin, compilation => {
-        if (compilation.cache) {
-            compilation.cache = compilation.cache[subCache] || {};
-        }
-    });
-
-    workerCompiler.runAsChild((err, entries) => {
+    workerCompiler.runAsChild((err, entries, childCompilation) => {
         if (err) {
             return callback(err);
         }
 
         if (entries[0]) {
+            const fileDeps = Array.from(childCompilation.fileDependencies);
+            this.clearDependencies();
+            fileDeps.map(fileName => {
+                this.addDependency(fileName);
+            });
             const workerFile = entries[0].files[0];
             this._compilation.workerChunks.push(workerFile);
             const workerFactory = getWorker(workerFile);
