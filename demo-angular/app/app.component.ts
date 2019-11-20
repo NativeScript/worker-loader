@@ -20,11 +20,11 @@ export class AppComponent implements OnInit {
         this.tsWorker = this.workerService.initTsWorker();
         this.jsWorker = this.workerService.initJsWorker();
 
-        this.tsWorker.postMessage("Ts worker loader executed!");
-        this.jsWorker.postMessage("Js worker loader executed!");
-
         this.tsWorker.onmessage = m => this.logWorkerMessage(m);
         this.jsWorker.onmessage = m => this.logWorkerMessage(m);
+
+        this.tsWorker.postMessage("Ts worker loader executed!");
+        this.jsWorker.postMessage("Js worker loader executed!");
     }
 
     private logWorkerMessage(message: MessageEvent) {
