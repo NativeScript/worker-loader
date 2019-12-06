@@ -1,22 +1,11 @@
-import { Injectable, OnDestroy } from "@angular/core";
-
 // add if building with webpack
 import * as TsWorker from "nativescript-worker-loader!./workers/typescript.worker";
+const workers = [];
 
-@Injectable()
-export class WorkerService implements OnDestroy {
+export class WorkerService {
     jsWorker: null;
     tsWorker: null;
     constructor() {
-    }
-
-    ngOnDestroy() {
-        if (this.jsWorker) {
-            (<any>this.jsWorker).terminate();
-        }
-        if (this.tsWorker) {
-            (<any>this.tsWorker).terminate();
-        }
     }
 
     initTsWorker() {
@@ -26,6 +15,7 @@ export class WorkerService implements OnDestroy {
 
         // add if building with webpack
         this.tsWorker = new TsWorker();
+        workers.push(this.tsWorker);
 
         return this.tsWorker;
     }
@@ -37,7 +27,16 @@ export class WorkerService implements OnDestroy {
 
         const JsWorker = require("nativescript-worker-loader!./workers/javascript.worker.js");
         this.jsWorker = new JsWorker();
+        workers.push(this.jsWorker);
 
         return this.jsWorker;
     }
+}
+
+if ((<any>module).hot) {
+    (<any>module).hot.dispose(() => {
+        workers.forEach(w => {
+            w.terminate();
+        })
+    })
 }
