@@ -22,11 +22,11 @@ export class HelloWorldModel extends Observable {
         this.tsWorker = this.workerService.initTsWorker();
         this.jsWorker = this.workerService.initJsWorker();
 
-        this.tsWorker.postMessage("Ts worker loader executed!");
-        this.jsWorker.postMessage("Js worker loader executed!");
-
         this.tsWorker.onmessage = m => console.log(m);
         this.jsWorker.onmessage = m => console.log(m);
+
+        this.tsWorker.postMessage("Ts worker loader executed!");
+        this.jsWorker.postMessage("Js worker loader executed!");
     }
 
     get message(): string {
