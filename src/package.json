@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "babel ./test/test.es6.js --out-file ./test/test.es5.js",
     "test": "mocha test/test.es5.js",
-    "posttest": "eslint ."
+    "posttest": "eslint .",
+    "prepare": "npm run test"
   },
   "eslintConfig": {
     "extends": "webpack",
@@ -29,6 +30,7 @@
           "functions": "never"
         }
       ],
+      "no-console": 0,
       "arrow-parens": 0,
       "func-names": 0,
       "import/no-extraneous-dependencies": 0,
@@ -48,7 +50,8 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "del": "^2.2.2",
-    "eslint": "^3.16.0",
+    "eslint": "^6.6.0",
+    "webpack": "~4.27.0",
     "eslint-config-webpack": "^1.0.0",
     "eslint-plugin-import": "^2.2.0",
     "mocha": "^5.2.0"

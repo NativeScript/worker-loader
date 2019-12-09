@@ -71,7 +71,7 @@ module.exports.pitch = function pitch(request) {
     };
 
     const plugins = (pluginOptions.plugins || []).map(plugin => {
-        if (typeof plugin !== 'string') {
+        if (typeof plugin !== "string") {
             return plugin;
         }
         const found = compilerOptions.plugins.find(p => p.constructor.name === plugin);
@@ -109,7 +109,7 @@ module.exports.pitch = function pitch(request) {
         if (entries[0]) {
             const fileDeps = Array.from(childCompilation.fileDependencies);
             this.clearDependencies();
-            fileDeps.map(fileName => {
+            fileDeps.forEach(fileName => {
                 this.addDependency(fileName);
             });
             /**

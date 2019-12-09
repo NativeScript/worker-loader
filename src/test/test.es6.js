@@ -78,7 +78,7 @@ describe("worker-loader", () => {
         assert.equal(files.length, 1);
 
         const content = await readFile(files[0]);
-        await assert.contains(content, "// worker test mark");
+        await assert.contains(content, "worker test mark");
 
         assert.ok(await statsFileIsCorrect(stats, testName));
     });
@@ -90,7 +90,7 @@ describe("worker-loader", () => {
         assert.equal(file, `expected/${testName}/namedWorker.js`);
 
         const content = await readFile(file);
-        await assert.contains(content, "// named worker test mark");
+        await assert.contains(content, "named worker test mark");
 
         assert.ok(await statsFileIsCorrect(stats, testName));
     });
@@ -121,8 +121,8 @@ describe("worker-loader", () => {
 
         const [firstContent, secondContent] = files.map(readFile);
 
-        await assert.contains(firstContent, "// w1 via worker options");
-        await assert.contains(secondContent, "// w2 via worker options");
+        await assert.contains(firstContent, "w1 via worker options");
+        await assert.contains(secondContent, "w2 via worker options");
 
         assert.ok(await statsFileIsCorrect(stats, testName));
     });
@@ -164,7 +164,7 @@ describe("worker-loader", () => {
         }).catch(error => assert.contains(error.message, noFallbackOptionErrorMessage))
     );
 
-    ["node", "async-node", "node-webkit", "atom", "electron", "electron-main", "electron-renderer"].forEach((target) => {
+    ["node", "async-node", "node-webkit", "electron-main", "electron-renderer"].forEach((target) => {
         it(`should not have missing dependencies (${target})`, () =>
             makeBundle("nodejs-core-modules", {
                 target,
@@ -181,7 +181,7 @@ describe("worker-loader", () => {
                     ],
                 },
             }).then((stats) => {
-                assert.equal(stats.compilation.missingDependencies.length, 0);
+                assert.equal(stats.compilation.missingDependencies.size, 0);
             })
         );
     });

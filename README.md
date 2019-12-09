@@ -222,11 +222,6 @@ const worker = new Worker("./worker-script");
 
 ```
 
-## Demo apps
-For usage with NativeScript Angular, check out [`demo-angular`](./demo-angular) in this repo.
-
-For usage with NativeScript apps written in plain JavaScript, check out this repo: https://github.com/NativeScript/demo-workers.
-
 ## Related docs
 
 1. [Workers in NativeScript](https://docs.nativescript.org/core-concepts/multithreading-model)
