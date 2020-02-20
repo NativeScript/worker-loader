@@ -171,10 +171,10 @@ describe("worker-loader", () => {
                 module: {
                     rules: [
                         {
-                            test: /worker\.js$/,
+                            test: /(w1|w2)\.js$/,
                             loader: "../index.js",
                             options: {
-                                inline: true,
+                                name: "[name].js",
                                 fallback: false,
                             },
                         },

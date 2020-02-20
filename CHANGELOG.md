@@ -1,3 +1,10 @@
+## [0.11.0](https://github.com/NativeScript/worker-loader/compare/0.10.0...0.11.0) (2020-02-20)
+
+### Bug Fixes
+
+* worker compilation should not be async ([#54](https://github.com/NativeScript/worker-loader/pull/54))
+
+
 ## [0.9.5](https://github.com/NativeScript/worker-loader/compare/0.9.4...0.9.5) (2019-02-06)
 
 

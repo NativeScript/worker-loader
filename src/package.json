@@ -1,11 +1,11 @@
 {
   "name": "nativescript-worker-loader",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "author": "NativeScript team",
   "description": "nativescript worker loader module for webpack",
   "scripts": {
     "pretest": "babel ./test/test.es6.js --out-file ./test/test.es5.js",
-    "test": "mocha test/test.es5.js",
+    "test": "mocha test/test.es5.js --timeout 5000",
     "posttest": "eslint .",
     "prepare": "npm run test"
   },
