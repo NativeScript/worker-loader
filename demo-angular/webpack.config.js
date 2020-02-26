@@ -1,4 +1,4 @@
-const { join, relative, resolve, sep, dirname } = require("path");
+const { join, relative, resolve, sep, dirname, basename } = require("path");
 
 const webpack = require("webpack");
 const nsWebpack = require("nativescript-dev-webpack");
@@ -13,6 +13,8 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const { NativeScriptWorkerPlugin } = require("nativescript-worker-loader/NativeScriptWorkerPlugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { getAngularCompilerPlugin } = require("nativescript-dev-webpack/plugins/NativeScriptAngularCompilerPlugin");
+const ExternalsPlugin = require("webpack/lib/ExternalsPlugin");
+
 const hashSalt = Date.now().toString();
 
 module.exports = env => {
@@ -66,6 +68,24 @@ module.exports = env => {
         entries["tns_modules/tns-core-modules/inspector_modules"] = "inspector_modules";
     };
 
+    const dataToCopy = (env.externals || []).map(dep => {
+        const rootNodeModulesPath = join(projectRoot, "node_modules");
+        const depRelativePath = relative(rootNodeModulesPath, join(rootNodeModulesPath, dep));
+        const platformLowerCase = platform.toLowerCase();
+        const oppositePlatform = platformLowerCase === "android" ? "ios" : "android";
+        return {
+            from: `../node_modules/${depRelativePath}`,
+            to: `${dist}/tns_modules/${depRelativePath}`,
+            ignore: ["**/platforms/**", `.${oppositePlatform}.`, "**/*.ts", "**/*.js.map"],
+            transformPath: (targetPath) => {
+                const originalBasename = basename(targetPath);
+                const modifiedBasename = originalBasename.replace(new RegExp(`\.${platformLowerCase}\.`), ".");
+                const result = join(dirname(targetPath), modifiedBasename);
+                return result;
+            }
+        };
+    });
+
     const ngCompilerTransformers = [];
     const additionalLazyModuleResources = [];
     if (aot) {
@@ -109,6 +129,7 @@ module.exports = env => {
     }
 
     nsWebpack.processAppComponents(appComponents, platform);
+    const libraryTarget = "commonjs2";
     const config = {
         mode: production ? "production" : "development",
         context: appFullPath,
@@ -126,7 +147,7 @@ module.exports = env => {
             pathinfo: false,
             path: dist,
             sourceMapFilename,
-            libraryTarget: "commonjs2",
+            libraryTarget,
             filename: "[name].js",
             globalObject: "global",
             hashSalt
@@ -274,11 +295,12 @@ module.exports = env => {
                 { from: { glob: "**/*.jpg" } },
                 { from: { glob: "**/*.png" } },
             ], { ignore: [`${relative(appPath, appResourcesFullPath)}/**`] }),
+            new CopyWebpackPlugin(dataToCopy),
             new nsWebpack.GenerateNativeScriptEntryPointsPlugin("bundle"),
             // For instructions on how to set up workers with webpack
             // check out https://github.com/nativescript/worker-loader
             new NativeScriptWorkerPlugin({
-                plugins: [ngCompilerPlugin]
+                plugins: [ngCompilerPlugin, new ExternalsPlugin(libraryTarget, externals)]
             }),
             ngCompilerPlugin,
             // Does IPC communication with the {N} CLI to notify events when running in watch mode.
