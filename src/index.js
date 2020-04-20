@@ -41,6 +41,13 @@ let pitchPromise = Promise.resolve();
 module.exports.pitch = function pitch(request) {
     const callback = this.async();
 
+    // handle calls to itself to avoid an infinite loop
+    if (requests.indexOf(request) === -1) {
+        requests.push(request);
+    } else {
+        return callback(null, "");
+    }
+
     pitchPromise = pitchPromise.then(() =>
         new Promise((resolve) => {
             if (!this.webpack) {
@@ -52,14 +59,6 @@ module.exports.pitch = function pitch(request) {
             const options = loaderUtils.getOptions(this) || {};
             const compilerOptions = this._compiler.options || {};
             const pluginOptions = compilerOptions.plugins.find(p => p[NATIVESCRIPT_WORKER_PLUGIN_SYMBOL]).options;
-
-            // handle calls to itself to avoid an infinite loop
-            if (requests.indexOf(request) === -1) {
-                requests.push(request);
-            } else {
-                resolve();
-                return callback(null, "");
-            }
 
             try {
                 validateSchema(optionsSchema, options, "Worker Loader");
