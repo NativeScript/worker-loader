@@ -1,0 +1,7 @@
+node_modules/
+test/
+package-lock.json
+.babelrc
+.eslintignore
+*.tgz
+.gitignore
