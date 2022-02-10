@@ -23,7 +23,7 @@
     "nativescript-dev-webpack": "next",
     "nativescript-worker-loader": "next",
     "nativescript-vue-template-compiler": "~2.4.0",
-    "node-sass": "^4.7.1",
+    "node-sass": "^7.0.0",
     "vue-loader": "~15.4.0"
   },
   "gitHead": "a6fec076a20f898feabb4466a2c411158c18a100",
